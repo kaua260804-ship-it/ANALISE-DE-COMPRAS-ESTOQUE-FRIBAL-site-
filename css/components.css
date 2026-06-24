@@ -1,0 +1,440 @@
+/* ========================================
+   COMPONENTS.CSS - COMPONENTES REUTILIZÁVEIS
+   ======================================== */
+
+/* ========================================
+   BADGES
+   ======================================== */
+.badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+.badge-success {
+    background: var(--success-50);
+    color: var(--success-700);
+}
+
+.badge-warning {
+    background: var(--warning-50);
+    color: var(--warning-700);
+}
+
+.badge-danger {
+    background: var(--danger-50);
+    color: var(--danger-700);
+}
+
+.badge-info {
+    background: var(--info-50);
+    color: var(--info-700);
+}
+
+.badge-neutral {
+    background: var(--gray-100);
+    color: var(--gray-600);
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: var(--font-primary);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.btn-primary {
+    background: var(--primary-500);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-600);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+    background: var(--gray-100);
+    color: var(--gray-700);
+}
+
+.btn-secondary:hover {
+    background: var(--gray-200);
+}
+
+.btn-clear {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: var(--gray-100);
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: var(--font-primary);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-600);
+    cursor: pointer;
+    transition: var(--transition-base);
+    white-space: nowrap;
+}
+
+.btn-clear:hover {
+    background: var(--gray-200);
+    color: var(--gray-800);
+}
+
+.btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: var(--radius-full);
+    background: var(--gray-100);
+    color: var(--gray-600);
+    cursor: pointer;
+    transition: var(--transition-base);
+    font-size: 16px;
+}
+
+.btn-icon:hover {
+    background: var(--primary-500);
+    color: white;
+    transform: rotate(180deg);
+}
+
+/* ========================================
+   CARDS
+   ======================================== */
+.card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: var(--transition-base);
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.card-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.card-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.card-info h3 {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+}
+
+.card-info p {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin: 2px 0 0 0;
+    letter-spacing: -0.5px;
+}
+
+/* ========================================
+   SKELETON LOADING
+   ======================================== */
+.skeleton {
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.card-skeleton {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 20px 24px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.skeleton-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-md);
+    background: var(--gray-200);
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-content {
+    flex: 1;
+}
+
+.skeleton-title {
+    height: 12px;
+    width: 60%;
+    background: var(--gray-200);
+    border-radius: 4px;
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-value {
+    height: 24px;
+    width: 40%;
+    background: var(--gray-200);
+    border-radius: 4px;
+    margin-top: 6px;
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+/* ========================================
+   LOADING
+   ======================================== */
+.loading-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    color: var(--gray-500);
+}
+
+.loading-message i {
+    font-size: 48px;
+    color: var(--primary-400);
+    margin-bottom: 16px;
+}
+
+.loading-message p {
+    font-size: 16px;
+    margin: 0;
+}
+
+/* ========================================
+   FILTERS
+   ======================================== */
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.filter-group label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.filter-group label i {
+    margin-right: 4px;
+    font-size: 10px;
+}
+
+.filter-group input,
+.filter-group select {
+    padding: 8px 12px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    font-family: var(--font-primary);
+    font-size: 13px;
+    color: var(--gray-800);
+    background: white;
+    transition: var(--transition-base);
+    outline: none;
+    width: 100%;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.filter-group input::placeholder {
+    color: var(--gray-400);
+}
+
+/* ========================================
+   STATS
+   ======================================== */
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    padding: 4px 0;
+}
+
+.stat-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-top: 2px;
+}
+
+/* ========================================
+   PAGINATION
+   ======================================== */
+.btn-pagination {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+    border: 1px solid #E5E7EB;
+    border-radius: var(--radius-sm);
+    background: white;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-base);
+    font-family: var(--font-primary);
+}
+
+.btn-pagination:hover:not(:disabled) {
+    background: var(--primary-50);
+    border-color: var(--primary-500);
+    color: var(--primary-600);
+}
+
+.btn-pagination:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.btn-pagination:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+/* Estilo para o select de página */
+.pagination-container select {
+    padding: 4px 8px;
+    border: 1px solid #E5E7EB;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-family: var(--font-primary);
+    background: white;
+    cursor: pointer;
+    outline: none;
+    transition: var(--transition-base);
+}
+
+.pagination-container select:focus {
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+/* Responsivo para paginação */
+@media (max-width: 768px) {
+    .pagination-container {
+        flex-direction: column;
+        align-items: center !important;
+        gap: 12px !important;
+    }
+    
+    .pagination-container > div:first-child {
+        text-align: center;
+    }
+    
+    .btn-pagination {
+        min-width: 28px;
+        height: 28px;
+        font-size: 12px;
+        padding: 0 6px;
+    }
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+@media (max-width: 768px) {
+    .card {
+        padding: 14px 16px;
+    }
+    
+    .card-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+    
+    .card-info p {
+        font-size: 18px;
+    }
+    
+    .stat-value {
+        font-size: 16px;
+    }
+    
+    .filter-group input,
+    .filter-group select {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .card {
+        padding: 12px 14px;
+    }
+    
+    .card-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+    
+    .card-info p {
+        font-size: 16px;
+    }
+}
