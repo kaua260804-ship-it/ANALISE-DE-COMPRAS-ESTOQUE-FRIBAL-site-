@@ -36,22 +36,22 @@ const STATUS_MAP = {
 };
 
 // ========================================
-// COLUNAS DA TABELA (COM GRUPO E SUBGRUPO1)
+// COLUNAS DA TABELA (NOVA ORDEM)
 // ========================================
 const TABLE_COLUMNS = [
     { key: 'Empresa', label: 'Empresa' },
     { key: 'Produto', label: 'Produto' },
     { key: 'Código Produto', label: 'Código' },
-    { key: 'CATEGORIA', label: 'Categoria' },
-    { key: 'GRUPO', label: 'Grupo' },
-    { key: 'SUBGRUPO1', label: 'Subgrupo' },
-    { key: 'COMPRADOR', label: 'Comprador' },
     { key: 'FORNECEDOR', label: 'Fornecedor' },
     { key: 'Quantidade Disponível (Loja)', label: 'Qtd Loja' },
     { key: 'Quantidade Disponível (CD)', label: 'Qtd CD' },
     { key: 'Preço Vda Unitário', label: 'Preço Unit.' },
     { key: 'Venda Valor', label: 'Venda R$' },
-    { key: 'Venda Quantidade', label: 'Venda Qtd' }
+    { key: 'Venda Quantidade', label: 'Venda Qtd' },
+    { key: 'CATEGORIA', label: 'Categoria' },
+    { key: 'GRUPO', label: 'Grupo' },
+    { key: 'SUBGRUPO1', label: 'Subgrupo' },
+    { key: 'COMPRADOR', label: 'Comprador' }
 ];
 
 // ========================================
