@@ -113,7 +113,8 @@ body {
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+    position: relative;
 }
 
 .data-status {
@@ -141,6 +142,76 @@ body {
 
 @keyframes spin {
     to { transform: rotate(360deg); }
+}
+
+/* ========================================
+   BOTÕES DO HEADER
+   ======================================== */
+.btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: var(--radius-full);
+    background: var(--gray-100);
+    color: var(--gray-600);
+    cursor: pointer;
+    transition: var(--transition-base);
+    font-size: 16px;
+    position: relative;
+}
+
+.btn-icon:hover {
+    background: var(--primary-500);
+    color: white;
+    transform: rotate(180deg);
+}
+
+.btn-cache-clear {
+    background: #FEE2E2;
+    color: #DC2626;
+}
+
+.btn-cache-clear:hover {
+    background: #DC2626;
+    color: white;
+    transform: scale(1.05) !important;
+}
+
+.btn-cache-clear:active {
+    transform: scale(0.95) !important;
+}
+
+/* Tooltip para os botões */
+.btn-icon[title]:hover::after,
+.btn-cache-clear[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--gray-800);
+    color: white;
+    padding: 4px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    z-index: 100;
+}
+
+.btn-icon[title]:hover::before,
+.btn-cache-clear[title]:hover::before {
+    content: '';
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-bottom-color: var(--gray-800);
+    z-index: 100;
 }
 
 /* ========================================
@@ -445,5 +516,10 @@ body {
     
     .filters-section {
         padding: 14px 16px;
+    }
+    
+    .btn-icon[title]:hover::after,
+    .btn-cache-clear[title]:hover::after {
+        display: none;
     }
 }
