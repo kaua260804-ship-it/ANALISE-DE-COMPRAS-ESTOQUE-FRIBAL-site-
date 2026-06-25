@@ -41,8 +41,11 @@
                         <i class="fas fa-circle"></i>
                         <span id="statusText">Iniciando...</span>
                     </div>
-                    <button class="btn-icon" onclick="App.loadData()" title="Recarregar dados">
+                    <button class="btn-icon" onclick="App.loadData()" title="Recarregar dados da planilha">
                         <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button class="btn-icon btn-cache-clear" onclick="App.forceReload()" title="Limpar cache e recarregar tudo">
+                        <i class="fas fa-trash-alt"></i>
                     </button>
                 </div>
             </div>
