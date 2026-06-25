@@ -45,22 +45,23 @@ const TableRenderer = {
         if (rowCount) rowCount.textContent = data.length;
         
         // ========================================
-        // COLUNAS (COM GRUPO E SUBGRUPO1)
+        // COLUNAS NA NOVA ORDEM
+        // Empresa | Produto | Código | Fornecedor | Qtd Loja | Qtd CD | Preço Unit. | Venda R$ | Venda Qtd | Categoria | Grupo | Subgrupo | Comprador
         // ========================================
         const colunas = [
             { key: 'Empresa', label: 'Empresa' },
             { key: 'Produto', label: 'Produto' },
             { key: 'Código Produto', label: 'Código' },
-            { key: 'CATEGORIA', label: 'Categoria' },
-            { key: 'GRUPO', label: 'Grupo' },
-            { key: 'SUBGRUPO1', label: 'Subgrupo' },
-            { key: 'COMPRADOR', label: 'Comprador' },
             { key: 'FORNECEDOR', label: 'Fornecedor' },
             { key: 'Quantidade Disponível (Loja)', label: 'Qtd Loja' },
             { key: 'Quantidade Disponível (CD)', label: 'Qtd CD' },
             { key: 'Preço Vda Unitário', label: 'Preço Unit.' },
             { key: 'Venda Valor', label: 'Venda R$' },
-            { key: 'Venda Quantidade', label: 'Venda Qtd' }
+            { key: 'Venda Quantidade', label: 'Venda Qtd' },
+            { key: 'CATEGORIA', label: 'Categoria' },
+            { key: 'GRUPO', label: 'Grupo' },
+            { key: 'SUBGRUPO1', label: 'Subgrupo' },
+            { key: 'COMPRADOR', label: 'Comprador' }
         ];
         
         let html = '<table><thead><tr>';
@@ -84,7 +85,13 @@ const TableRenderer = {
                         extraStyle = ' style="color:#6B7280;font-weight:500;"';
                     }
                     if (!valor) valor = 'N/A';
-                } else if (col.key === 'GRUPO' || col.key === 'SUBGRUPO1') {
+                } else if (col.key === 'GRUPO' || col.key === 'SUBGRUPO1' || col.key === 'CATEGORIA' || col.key === 'COMPRADOR') {
+                    if (valor) {
+                        extraStyle = ' style="color:#6B7280;"';
+                    } else {
+                        valor = '-';
+                    }
+                } else if (col.key === 'FORNECEDOR') {
                     if (valor) {
                         extraStyle = ' style="color:#6B7280;"';
                     } else {
@@ -180,21 +187,21 @@ const TableRenderer = {
         
         console.log('📊 Exportando para Excel:', data.length, 'registros');
         
-        // Prepara os dados para exportação
+        // Prepara os dados para exportação (nova ordem)
         const exportData = data.map(item => ({
             'Empresa': item['Empresa'] || '',
             'Produto': item['Produto'] || '',
             'Código': item['Código Produto'] || '',
-            'Categoria': item['CATEGORIA'] || '',
-            'Grupo': item['GRUPO'] || '',
-            'Subgrupo': item['SUBGRUPO1'] || '',
-            'Comprador': item['COMPRADOR'] || '',
             'Fornecedor': item['FORNECEDOR'] || '',
             'Qtd Loja': item['Quantidade Disponível (Loja)'] || 0,
             'Qtd CD': item['Quantidade Disponível (CD)'] || 0,
             'Preço Unit.': item['Preço Vda Unitário'] || 0,
             'Venda R$': item['Venda Valor'] || 0,
-            'Venda Qtd': item['Venda Quantidade'] || 0
+            'Venda Qtd': item['Venda Quantidade'] || 0,
+            'Categoria': item['CATEGORIA'] || '',
+            'Grupo': item['GRUPO'] || '',
+            'Subgrupo': item['SUBGRUPO1'] || '',
+            'Comprador': item['COMPRADOR'] || ''
         }));
         
         // Cria workbook
@@ -202,21 +209,21 @@ const TableRenderer = {
         const ws = XLSX.utils.json_to_sheet(exportData);
         XLSX.utils.book_append_sheet(wb, ws, 'Relatorio');
         
-        // Ajusta largura das colunas
+        // Ajusta largura das colunas (nova ordem)
         ws['!cols'] = [
             { wch: 15 }, // Empresa
             { wch: 40 }, // Produto
             { wch: 12 }, // Código
-            { wch: 15 }, // Categoria
-            { wch: 15 }, // Grupo
-            { wch: 15 }, // Subgrupo
-            { wch: 20 }, // Comprador
             { wch: 30 }, // Fornecedor
             { wch: 10 }, // Qtd Loja
             { wch: 10 }, // Qtd CD
             { wch: 12 }, // Preço Unit.
             { wch: 14 }, // Venda R$
-            { wch: 10 }  // Venda Qtd
+            { wch: 10 }, // Venda Qtd
+            { wch: 15 }, // Categoria
+            { wch: 15 }, // Grupo
+            { wch: 15 }, // Subgrupo
+            { wch: 20 }  // Comprador
         ];
         
         // Salva o arquivo
