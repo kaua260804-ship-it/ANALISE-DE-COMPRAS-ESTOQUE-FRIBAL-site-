@@ -45,13 +45,15 @@ const TableRenderer = {
         if (rowCount) rowCount.textContent = data.length;
         
         // ========================================
-        // COLUNAS (SEM STATUS)
+        // COLUNAS (COM GRUPO E SUBGRUPO1)
         // ========================================
         const colunas = [
             { key: 'Empresa', label: 'Empresa' },
             { key: 'Produto', label: 'Produto' },
             { key: 'Código Produto', label: 'Código' },
             { key: 'CATEGORIA', label: 'Categoria' },
+            { key: 'GRUPO', label: 'Grupo' },
+            { key: 'SUBGRUPO1', label: 'Subgrupo' },
             { key: 'COMPRADOR', label: 'Comprador' },
             { key: 'FORNECEDOR', label: 'Fornecedor' },
             { key: 'Quantidade Disponível (Loja)', label: 'Qtd Loja' },
@@ -82,6 +84,12 @@ const TableRenderer = {
                         extraStyle = ' style="color:#6B7280;font-weight:500;"';
                     }
                     if (!valor) valor = 'N/A';
+                } else if (col.key === 'GRUPO' || col.key === 'SUBGRUPO1') {
+                    if (valor) {
+                        extraStyle = ' style="color:#6B7280;"';
+                    } else {
+                        valor = '-';
+                    }
                 } else if (col.key === 'Quantidade Disponível (Loja)' && typeof valor === 'number') {
                     if (valor < 0) extraStyle = ' style="color:#DC2626;font-weight:600;"';
                     else if (valor < 10 && valor > 0) extraStyle = ' style="color:#D97706;font-weight:500;"';
@@ -178,6 +186,8 @@ const TableRenderer = {
             'Produto': item['Produto'] || '',
             'Código': item['Código Produto'] || '',
             'Categoria': item['CATEGORIA'] || '',
+            'Grupo': item['GRUPO'] || '',
+            'Subgrupo': item['SUBGRUPO1'] || '',
             'Comprador': item['COMPRADOR'] || '',
             'Fornecedor': item['FORNECEDOR'] || '',
             'Qtd Loja': item['Quantidade Disponível (Loja)'] || 0,
@@ -198,6 +208,8 @@ const TableRenderer = {
             { wch: 40 }, // Produto
             { wch: 12 }, // Código
             { wch: 15 }, // Categoria
+            { wch: 15 }, // Grupo
+            { wch: 15 }, // Subgrupo
             { wch: 20 }, // Comprador
             { wch: 30 }, // Fornecedor
             { wch: 10 }, // Qtd Loja
