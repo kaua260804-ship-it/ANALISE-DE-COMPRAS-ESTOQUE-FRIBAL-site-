@@ -9,6 +9,8 @@ const Filters = {
     selected: {
         empresa: [],
         categoria: [],
+        grupo: [],
+        subgrupo1: [],
         comprador: []
     },
     
@@ -25,13 +27,23 @@ const Filters = {
         
         // ===== EMPRESAS =====
         const empresas = [...new Set(data.map(i => i['Empresa']).filter(Boolean))];
-        console.log('🏢 Empresas encontradas:', empresas);
+        console.log('🏢 Empresas encontradas:', empresas.length);
         this.populateMultiSelect('empresaFilter', empresas);
         
         // ===== CATEGORIAS =====
         const categorias = [...new Set(data.map(i => i['CATEGORIA']).filter(Boolean))];
         console.log('📂 Categorias encontradas:', categorias.length);
         this.populateMultiSelect('categoriaFilter', categorias);
+        
+        // ===== GRUPOS =====
+        const grupos = [...new Set(data.map(i => i['GRUPO']).filter(Boolean))];
+        console.log('📁 Grupos encontrados:', grupos.length);
+        this.populateMultiSelect('grupoFilter', grupos);
+        
+        // ===== SUBGRUPO1 =====
+        const subgrupos1 = [...new Set(data.map(i => i['SUBGRUPO1']).filter(Boolean))];
+        console.log('📂 Subgrupos 1 encontrados:', subgrupos1.length);
+        this.populateMultiSelect('subgrupo1Filter', subgrupos1);
         
         // ===== COMPRADORES =====
         const compradores = [...new Set(data.map(i => i['COMPRADOR']).filter(Boolean))];
@@ -64,7 +76,7 @@ const Filters = {
         options.sort().forEach(value => {
             const option = document.createElement('option');
             option.value = value;
-            option.textContent = value;
+            option.textContent = value || '(vazio)';
             option.selected = currentSelected.includes(value);
             el.appendChild(option);
         });
@@ -107,6 +119,8 @@ const Filters = {
         // Pega os valores selecionados de cada filtro
         const empresaSelected = Array.from(document.getElementById('empresaFilter').selectedOptions).map(o => o.value);
         const categoriaSelected = Array.from(document.getElementById('categoriaFilter').selectedOptions).map(o => o.value);
+        const grupoSelected = Array.from(document.getElementById('grupoFilter').selectedOptions).map(o => o.value);
+        const subgrupo1Selected = Array.from(document.getElementById('subgrupo1Filter').selectedOptions).map(o => o.value);
         const compradorSelected = Array.from(document.getElementById('compradorFilter').selectedOptions).map(o => o.value);
         
         return data.filter(item => {
@@ -129,6 +143,16 @@ const Filters = {
                 if (!categoriaSelected.includes(item['CATEGORIA'])) return false;
             }
             
+            // Filtro Grupo (multipla escolha)
+            if (!grupoSelected.includes('all') && grupoSelected.length > 0) {
+                if (!grupoSelected.includes(item['GRUPO'])) return false;
+            }
+            
+            // Filtro Subgrupo1 (multipla escolha)
+            if (!subgrupo1Selected.includes('all') && subgrupo1Selected.length > 0) {
+                if (!subgrupo1Selected.includes(item['SUBGRUPO1'])) return false;
+            }
+            
             // Filtro Comprador (multipla escolha)
             if (!compradorSelected.includes('all') && compradorSelected.length > 0) {
                 if (!compradorSelected.includes(item['COMPRADOR'])) return false;
@@ -145,7 +169,7 @@ const Filters = {
         document.getElementById('searchInput').value = '';
         
         // Limpa seleções dos multiselects
-        ['empresaFilter', 'categoriaFilter', 'compradorFilter'].forEach(id => {
+        ['empresaFilter', 'categoriaFilter', 'grupoFilter', 'subgrupo1Filter', 'compradorFilter'].forEach(id => {
             const el = document.getElementById(id);
             if (!el) return;
             // Seleciona "Todos"
