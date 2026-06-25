@@ -123,10 +123,15 @@ const TableRenderer = {
             pageOptions += `<option value="all">...</option>`;
         }
         
+        // Verifica se está carregando
+        const statusEl = document.getElementById('dataStatus');
+        const isLoading = statusEl ? statusEl.classList.contains('loading') : false;
+        
         return `
             <div class="pagination-container" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-top:1px solid #E5E7EB;background:#F9FAFB;flex-wrap:wrap;gap:8px;">
                 <div style="font-size:13px;color:#6B7280;">
                     Mostrando <strong>${start + 1}</strong> a <strong>${end}</strong> de <strong>${total}</strong> registros
+                    ${isLoading ? '<span style="margin-left:8px;color:#D97706;"><i class="fas fa-spinner fa-spin"></i> atualizando...</span>' : ''}
                 </div>
                 <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
                     <button class="btn-pagination" onclick="TableRenderer.goToPage(1)" ${this.currentPage === 1 ? 'disabled' : ''}>
@@ -167,7 +172,7 @@ const TableRenderer = {
         
         console.log('📊 Exportando para Excel:', data.length, 'registros');
         
-        // Prepara os dados para exportação (sem Status)
+        // Prepara os dados para exportação
         const exportData = data.map(item => ({
             'Empresa': item['Empresa'] || '',
             'Produto': item['Produto'] || '',
