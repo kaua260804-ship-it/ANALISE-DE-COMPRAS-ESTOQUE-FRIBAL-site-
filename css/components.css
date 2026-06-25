@@ -100,27 +100,6 @@
     color: var(--gray-800);
 }
 
-.btn-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border: none;
-    border-radius: var(--radius-full);
-    background: var(--gray-100);
-    color: var(--gray-600);
-    cursor: pointer;
-    transition: var(--transition-base);
-    font-size: 16px;
-}
-
-.btn-icon:hover {
-    background: var(--primary-500);
-    color: white;
-    transform: rotate(180deg);
-}
-
 /* ========================================
    CARDS
    ======================================== */
@@ -296,6 +275,27 @@
     color: var(--gray-400);
 }
 
+/* Multi-select personalizado */
+.filter-group select[multiple] {
+    min-height: 80px;
+    padding: 4px;
+}
+
+.filter-group select[multiple] option {
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.filter-group select[multiple] option:hover {
+    background: var(--primary-50);
+}
+
+.filter-group select[multiple] option:checked {
+    background: var(--primary-500);
+    color: white;
+}
+
 /* ========================================
    STATS
    ======================================== */
@@ -311,6 +311,11 @@
     color: var(--gray-500);
     text-transform: uppercase;
     letter-spacing: 0.3px;
+}
+
+.stat-label i {
+    margin-right: 4px;
+    font-size: 10px;
 }
 
 .stat-value {
@@ -374,24 +379,10 @@
     box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
-/* Responsivo para paginação */
-@media (max-width: 768px) {
-    .pagination-container {
-        flex-direction: column;
-        align-items: center !important;
-        gap: 12px !important;
-    }
-    
-    .pagination-container > div:first-child {
-        text-align: center;
-    }
-    
-    .btn-pagination {
-        min-width: 28px;
-        height: 28px;
-        font-size: 12px;
-        padding: 0 6px;
-    }
+/* Botão Exportar */
+.btn-pagination[style*="background:#059669"]:hover {
+    background: #047857 !important;
+    transform: scale(1.02);
 }
 
 /* ========================================
@@ -421,6 +412,27 @@
         font-size: 12px;
         padding: 6px 10px;
     }
+    
+    .filter-group select[multiple] {
+        min-height: 60px;
+    }
+    
+    .pagination-container {
+        flex-direction: column;
+        align-items: center !important;
+        gap: 12px !important;
+    }
+    
+    .pagination-container > div:first-child {
+        text-align: center;
+    }
+    
+    .btn-pagination {
+        min-width: 28px;
+        height: 28px;
+        font-size: 12px;
+        padding: 0 6px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -436,5 +448,13 @@
     
     .card-info p {
         font-size: 16px;
+    }
+    
+    .stat-value {
+        font-size: 14px;
+    }
+    
+    .filter-group select[multiple] {
+        min-height: 50px;
     }
 }
