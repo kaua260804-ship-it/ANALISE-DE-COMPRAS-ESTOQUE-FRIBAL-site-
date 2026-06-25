@@ -36,7 +36,7 @@ const STATUS_MAP = {
 };
 
 // ========================================
-// COLUNAS DA TABELA
+// COLUNAS DA TABELA (COM GRUPO E SUBGRUPO1)
 // ========================================
 const TABLE_COLUMNS = [
     { key: 'Empresa', label: 'Empresa' },
