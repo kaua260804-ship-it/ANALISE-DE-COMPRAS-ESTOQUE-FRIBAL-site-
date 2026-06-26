@@ -254,7 +254,7 @@ body {
 
 .filters-container {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr auto;
     gap: 16px;
     align-items: end;
 }
@@ -271,6 +271,117 @@ body {
     padding: 16px 24px;
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--gray-200);
+}
+
+/* ========================================
+   FILTROS PERSONALIZADOS
+   ======================================== */
+.filters-personalizados {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--gray-200);
+}
+
+.filter-group-custom {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: var(--gray-50);
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--gray-200);
+}
+
+.filter-group-custom label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-700);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.filter-group-custom label i {
+    margin-right: 6px;
+    color: var(--primary-500);
+}
+
+.filter-group-custom label small {
+    font-weight: 400;
+    text-transform: none;
+    color: #9CA3AF;
+}
+
+.filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+}
+
+.filter-option {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: var(--transition-base);
+}
+
+.filter-option:hover {
+    background: var(--gray-200);
+}
+
+.filter-option input[type="radio"] {
+    accent-color: var(--primary-500);
+    cursor: pointer;
+    width: 14px;
+    height: 14px;
+}
+
+.filter-option span {
+    font-weight: 500;
+}
+
+.filter-option small {
+    font-weight: 400;
+    color: var(--gray-400);
+    font-size: 10px;
+}
+
+.filter-group-custom select[multiple] {
+    min-height: 60px;
+    padding: 4px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    font-family: var(--font-primary);
+    font-size: 12px;
+    color: var(--gray-800);
+    background: white;
+    outline: none;
+}
+
+.filter-group-custom select[multiple]:focus {
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.filter-group-custom select[multiple] option {
+    padding: 3px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.filter-group-custom select[multiple] option:hover {
+    background: var(--primary-50);
+}
+
+.filter-group-custom select[multiple] option:checked {
+    background: var(--primary-500);
+    color: white;
 }
 
 /* ========================================
@@ -411,6 +522,17 @@ body {
 /* ========================================
    RESPONSIVE
    ======================================== */
+@media (max-width: 1200px) {
+    .filters-container {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    
+    .filter-actions {
+        grid-column: span 3;
+        justify-content: flex-end;
+    }
+}
+
 @media (max-width: 1024px) {
     .filters-container {
         grid-template-columns: 1fr 1fr;
@@ -467,6 +589,10 @@ body {
         justify-content: flex-start;
     }
     
+    .filters-personalizados {
+        grid-template-columns: 1fr 1fr;
+    }
+    
     .table-header {
         flex-direction: column;
         align-items: flex-start;
@@ -504,6 +630,10 @@ body {
         grid-template-columns: 1fr;
     }
     
+    .filters-personalizados {
+        grid-template-columns: 1fr;
+    }
+    
     .header-container {
         flex-wrap: wrap;
         gap: 8px;
@@ -516,6 +646,15 @@ body {
     
     .filters-section {
         padding: 14px 16px;
+    }
+    
+    .filter-options {
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .filter-group-custom {
+        padding: 10px 12px;
     }
     
     .btn-icon[title]:hover::after,
