@@ -11,7 +11,8 @@ const Filters = {
         categoria: [],
         grupo: [],
         subgrupo1: [],
-        comprador: []
+        comprador: [],
+        fornecedor: []
     },
     
     /**
@@ -49,6 +50,11 @@ const Filters = {
         const compradores = [...new Set(data.map(i => i['COMPRADOR']).filter(Boolean))];
         console.log('👤 Compradores encontrados:', compradores.length);
         this.populateMultiSelect('compradorFilter', compradores);
+        
+        // ===== FORNECEDORES =====
+        const fornecedores = [...new Set(data.map(i => i['FORNECEDOR']).filter(Boolean))];
+        console.log('🚚 Fornecedores encontrados:', fornecedores.length);
+        this.populateMultiSelect('fornecedorFilter', fornecedores);
         
         console.log('✅ Filtros populados com sucesso!');
     },
@@ -111,7 +117,7 @@ const Filters = {
     },
     
     /**
-     * Aplica os filtros aos dados (MULTIPLA ESCOLHA)
+     * Aplica os filtros aos dados (MULTIPLA ESCOLHA + PERSONALIZADOS)
      */
     apply(data) {
         const search = document.getElementById('searchInput').value.toLowerCase().trim();
@@ -122,6 +128,16 @@ const Filters = {
         const grupoSelected = Array.from(document.getElementById('grupoFilter').selectedOptions).map(o => o.value);
         const subgrupo1Selected = Array.from(document.getElementById('subgrupo1Filter').selectedOptions).map(o => o.value);
         const compradorSelected = Array.from(document.getElementById('compradorFilter').selectedOptions).map(o => o.value);
+        const fornecedorSelected = Array.from(document.getElementById('fornecedorFilter').selectedOptions).map(o => o.value);
+        
+        // Filtros personalizados (radio)
+        const comparativoEstoque = document.querySelector('input[name="comparativoEstoque"]:checked');
+        const statusEstoque = document.querySelector('input[name="statusEstoque"]:checked');
+        const statusVenda = document.querySelector('input[name="statusVenda"]:checked');
+        
+        const comparativoValue = comparativoEstoque ? comparativoEstoque.value : 'all';
+        const statusEstoqueValue = statusEstoque ? statusEstoque.value : 'all';
+        const statusVendaValue = statusVenda ? statusVenda.value : 'all';
         
         return data.filter(item => {
             // Busca
@@ -133,29 +149,87 @@ const Filters = {
                 }
             }
             
-            // Filtro Empresa (multipla escolha)
+            // Filtro Empresa
             if (!empresaSelected.includes('all') && empresaSelected.length > 0) {
                 if (!empresaSelected.includes(item['Empresa'])) return false;
             }
             
-            // Filtro Categoria (multipla escolha)
+            // Filtro Categoria
             if (!categoriaSelected.includes('all') && categoriaSelected.length > 0) {
                 if (!categoriaSelected.includes(item['CATEGORIA'])) return false;
             }
             
-            // Filtro Grupo (multipla escolha)
+            // Filtro Grupo
             if (!grupoSelected.includes('all') && grupoSelected.length > 0) {
                 if (!grupoSelected.includes(item['GRUPO'])) return false;
             }
             
-            // Filtro Subgrupo1 (multipla escolha)
+            // Filtro Subgrupo1
             if (!subgrupo1Selected.includes('all') && subgrupo1Selected.length > 0) {
                 if (!subgrupo1Selected.includes(item['SUBGRUPO1'])) return false;
             }
             
-            // Filtro Comprador (multipla escolha)
+            // Filtro Comprador
             if (!compradorSelected.includes('all') && compradorSelected.length > 0) {
                 if (!compradorSelected.includes(item['COMPRADOR'])) return false;
+            }
+            
+            // Filtro Fornecedor
+            if (!fornecedorSelected.includes('all') && fornecedorSelected.length > 0) {
+                if (!fornecedorSelected.includes(item['FORNECEDOR'])) return false;
+            }
+            
+            // ========================================
+            // FILTROS PERSONALIZADOS
+            // ========================================
+            
+            const qtdLoja = parseFloat(item['Quantidade Disponível (Loja)']) || 0;
+            const qtdCD = parseFloat(item['Quantidade Disponível (CD)']) || 0;
+            const vendaQtd = parseFloat(item['Venda Quantidade']) || 0;
+            
+            // 1. COMPARATIVO ESTOQUE
+            if (comparativoValue !== 'all') {
+                switch(comparativoValue) {
+                    case 'lojaZero_cdMaior': // Loja=0 e CD>0
+                        if (!(qtdLoja === 0 && qtdCD > 0)) return false;
+                        break;
+                    case 'lojaMaior_cdMaior': // Loja>0 e CD>0
+                        if (!(qtdLoja > 0 && qtdCD > 0)) return false;
+                        break;
+                    case 'lojaZero_cdZero': // Loja=0 e CD=0
+                        if (!(qtdLoja === 0 && qtdCD === 0)) return false;
+                        break;
+                    case 'lojaMaior_cdZero': // Loja>0 e CD=0
+                        if (!(qtdLoja > 0 && qtdCD === 0)) return false;
+                        break;
+                }
+            }
+            
+            // 2. STATUS ESTOQUE
+            if (statusEstoqueValue !== 'all') {
+                switch(statusEstoqueValue) {
+                    case 'negativo': // Loja < 0
+                        if (!(qtdLoja < 0)) return false;
+                        break;
+                    case 'normal': // Loja > 0
+                        if (!(qtdLoja > 0)) return false;
+                        break;
+                    case 'zero': // Loja = 0
+                        if (!(qtdLoja === 0)) return false;
+                        break;
+                }
+            }
+            
+            // 3. STATUS VENDA
+            if (statusVendaValue !== 'all') {
+                switch(statusVendaValue) {
+                    case 'comVenda': // Venda > 0
+                        if (!(vendaQtd > 0)) return false;
+                        break;
+                    case 'semVenda': // Venda = 0
+                        if (!(vendaQtd === 0)) return false;
+                        break;
+                }
             }
             
             return true;
@@ -169,12 +243,20 @@ const Filters = {
         document.getElementById('searchInput').value = '';
         
         // Limpa seleções dos multiselects
-        ['empresaFilter', 'categoriaFilter', 'grupoFilter', 'subgrupo1Filter', 'compradorFilter'].forEach(id => {
+        ['empresaFilter', 'categoriaFilter', 'grupoFilter', 'subgrupo1Filter', 'compradorFilter', 'fornecedorFilter'].forEach(id => {
             const el = document.getElementById(id);
             if (!el) return;
-            // Seleciona "Todos"
             for (let opt of el.options) {
                 opt.selected = opt.value === 'all';
+            }
+        });
+        
+        // Limpa os radios
+        document.querySelectorAll('input[type="radio"]').forEach(el => {
+            if (el.value === 'all') {
+                el.checked = true;
+            } else {
+                el.checked = false;
             }
         });
     }
