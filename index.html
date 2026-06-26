@@ -61,7 +61,6 @@
             <!-- ======================================== -->
             <section class="dashboard-section" id="dashboardSection">
                 <div class="cards-grid" id="cardsContainer">
-                    <!-- Card 1: Total Produtos -->
                     <div class="card">
                         <div class="card-icon" style="background: #4F46E5;">
                             <i class="fas fa-box"></i>
@@ -71,8 +70,6 @@
                             <p id="totalProdutos">0</p>
                         </div>
                     </div>
-                    
-                    <!-- Card 2: Estoque Loja -->
                     <div class="card">
                         <div class="card-icon" style="background: #059669;">
                             <i class="fas fa-store"></i>
@@ -82,8 +79,6 @@
                             <p id="totalEstoqueLoja">0</p>
                         </div>
                     </div>
-                    
-                    <!-- Card 3: Venda Qtd -->
                     <div class="card">
                         <div class="card-icon" style="background: #D97706;">
                             <i class="fas fa-shopping-cart"></i>
@@ -93,8 +88,6 @@
                             <p id="totalVendaQtd">0</p>
                         </div>
                     </div>
-                    
-                    <!-- Card 4: Vendas (R$) -->
                     <div class="card">
                         <div class="card-icon" style="background: #DC2626;">
                             <i class="fas fa-dollar-sign"></i>
@@ -111,6 +104,7 @@
             <!-- FILTERS -->
             <!-- ======================================== -->
             <section class="filters-section" id="filtersSection">
+                <!-- Filtros padrão -->
                 <div class="filters-container">
                     <div class="filter-group">
                         <label><i class="fas fa-search"></i> Buscar</label>
@@ -152,6 +146,100 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- ======================================== -->
+                <!-- FILTROS PERSONALIZADOS -->
+                <!-- ======================================== -->
+                <div class="filters-personalizados">
+                    
+                    <!-- 1. COMPARATIVO ESTOQUE -->
+                    <div class="filter-group-custom">
+                        <label><i class="fas fa-balance-scale"></i> Comparativo Estoque</label>
+                        <div class="filter-options">
+                            <label class="filter-option">
+                                <input type="radio" name="comparativoEstoque" value="all" checked onchange="App.applyFilters()">
+                                <span>Todos</span>
+                            </label>
+                            <label class="filter-option">
+                                <input type="radio" name="comparativoEstoque" value="lojaZero_cdMaior" onchange="App.applyFilters()">
+                                <span style="color:#D97706;">S Estoque Loja / C Estq CD</span>
+                                <small style="color:#9CA3AF;">(Loja=0 e CD>0)</small>
+                            </label>
+                            <label class="filter-option">
+                                <input type="radio" name="comparativoEstoque" value="lojaMaior_cdMaior" onchange="App.applyFilters()">
+                                <span style="color:#059669;">C Estoque Loja / C Estq CD</span>
+                                <small style="color:#9CA3AF;">(Loja>0 e CD>0)</small>
+                            </label>
+                            <label class="filter-option">
+                                <input type="radio" name="comparativoEstoque" value="lojaZero_cdZero" onchange="App.applyFilters()">
+                                <span style="color:#DC2626;">S Estoque Loja / S Estq CD</span>
+                                <small style="color:#9CA3AF;">(Loja=0 e CD=0)</small>
+                            </label>
+                            <label class="filter-option">
+                                <input type="radio" name="comparativoEstoque" value="lojaMaior_cdZero" onchange="App.applyFilters()">
+                                <span style="color:#4F46E5;">C Estoque Loja / S Estq CD</span>
+                                <small style="color:#9CA3AF;">(Loja>0 e CD=0)</small>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 2. STATUS ESTOQUE -->
+                    <div class="filter-group-custom">
+                        <label><i class="fas fa-warehouse"></i> Status Estoque</label>
+                        <div class="filter-options">
+                            <label class="filter-option">
+                                <input type="radio" name="statusEstoque" value="all" checked onchange="App.applyFilters()">
+                                <span>Todos</span>
+                            </label>
+                            <label class="filter-option">
+                                <input type="radio" name="statusEstoque" value="negativo" onchange="App.applyFilters()">
+                                <span style="color:#DC2626;">Estoque Negativo</span>
+                                <small style="color:#9CA3AF;">(&lt; 0)</small>
+                            </label>
+                            <label class="filter-option">
+                                <input type="radio" name="statusEstoque" value="normal" onchange="App.applyFilters()">
+                                <span style="color:#059669;">Estoque Normal</span>
+                                <small style="color:#9CA3AF;">(&gt; 0)</small>
+                            </label>
+                            <label class="filter-option">
+                                <input type="radio" name="statusEstoque" value="zero" onchange="App.applyFilters()">
+                                <span style="color:#D97706;">Estoque Zero</span>
+                                <small style="color:#9CA3AF;">(= 0)</small>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 3. STATUS VENDA -->
+                    <div class="filter-group-custom">
+                        <label><i class="fas fa-shopping-cart"></i> Status Venda</label>
+                        <div class="filter-options">
+                            <label class="filter-option">
+                                <input type="radio" name="statusVenda" value="all" checked onchange="App.applyFilters()">
+                                <span>Todos</span>
+                            </label>
+                            <label class="filter-option">
+                                <input type="radio" name="statusVenda" value="comVenda" onchange="App.applyFilters()">
+                                <span style="color:#059669;">Com Venda</span>
+                                <small style="color:#9CA3AF;">(&gt; 0)</small>
+                            </label>
+                            <label class="filter-option">
+                                <input type="radio" name="statusVenda" value="semVenda" onchange="App.applyFilters()">
+                                <span style="color:#DC2626;">Sem Venda</span>
+                                <small style="color:#9CA3AF;">(= 0)</small>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 4. FORNECEDOR -->
+                    <div class="filter-group-custom">
+                        <label><i class="fas fa-truck"></i> Fornecedor <small style="font-weight:400;text-transform:none;color:#9CA3AF;">(Ctrl+Click)</small></label>
+                        <select id="fornecedorFilter" multiple size="4">
+                            <option value="all" selected>Todos</option>
+                        </select>
+                    </div>
+
+                </div>
+
                 <div style="margin-top:8px;font-size:11px;color:#9CA3AF;display:flex;gap:16px;flex-wrap:wrap;">
                     <span><i class="fas fa-info-circle"></i> Segure <kbd style="background:#F3F4F6;padding:1px 6px;border-radius:3px;font-size:10px;">Ctrl</kbd> para selecionar múltiplos</span>
                     <span><i class="fas fa-mouse-pointer"></i> Clique em "Todos" para limpar a seleção</span>
