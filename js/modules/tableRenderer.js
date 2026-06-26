@@ -45,7 +45,7 @@ const TableRenderer = {
         if (rowCount) rowCount.textContent = data.length;
         
         // ========================================
-        // COLUNAS NA NOVA ORDEM
+        // COLUNAS NA ORDEM SOLICITADA
         // Empresa | Produto | Código | Fornecedor | Qtd Loja | Qtd CD | Preço Unit. | Venda R$ | Venda Qtd | Categoria | Grupo | Subgrupo | Comprador
         // ========================================
         const colunas = [
@@ -187,7 +187,7 @@ const TableRenderer = {
         
         console.log('📊 Exportando para Excel:', data.length, 'registros');
         
-        // Prepara os dados para exportação (nova ordem)
+        // Prepara os dados para exportação na ordem correta
         const exportData = data.map(item => ({
             'Empresa': item['Empresa'] || '',
             'Produto': item['Produto'] || '',
@@ -209,7 +209,7 @@ const TableRenderer = {
         const ws = XLSX.utils.json_to_sheet(exportData);
         XLSX.utils.book_append_sheet(wb, ws, 'Relatorio');
         
-        // Ajusta largura das colunas (nova ordem)
+        // Ajusta largura das colunas
         ws['!cols'] = [
             { wch: 15 }, // Empresa
             { wch: 40 }, // Produto
