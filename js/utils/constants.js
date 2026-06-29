@@ -19,8 +19,18 @@ const SHEET_NAMES = {
     VENDA_LOJA: ['VD LJ', 'VENDA LOJA', 'VENDA_LJ', 'VENDAS']
 };
 
+// Mapeamento de empresa para divisão (usado para buscar na BS CAD)
 const EMPRESA_MAP = {
     'R001-EMP.CALHAU': 'VAREJO',
+    'R004-EMP.COHAMA': 'VAREJO',
+    'R005-MERC CRV90': 'VAREJO',
+    'R027-EMP.PNS': 'VAREJO',
+    'R028-EMP.TURU': 'VAREJO',
+    'R029-EMP.PDA': 'VAREJO',
+    'R063-MERC STI': 'VAREJO',
+    'R064-EMP.THE': 'VAREJO',
+    'R065-EMP.ITZ': 'VAREJO',
+    'R072-MERC MAIOB': 'VAREJO',
     'C001-CD BR': 'DISTRIBUICAO'
 };
 
@@ -36,7 +46,7 @@ const STATUS_MAP = {
 };
 
 // ========================================
-// COLUNAS DA TABELA (NOVA ORDEM)
+// COLUNAS DA TABELA
 // ========================================
 const TABLE_COLUMNS = [
     { key: 'Empresa', label: 'Empresa' },
