@@ -20,9 +20,9 @@ const App = {
     init() {
         console.log('🚀 Inicializando aplicação...');
         
-        // Verifica se tem dados em cache
+        // Verifica se tem dados em cache (apenas para datasets pequenos)
         const cache = this.loadFromCache();
-        if (cache) {
+        if (cache && cache.length < 50000) {
             console.log('📦 Carregando dados do cache...');
             this.state.dados = cache;
             this.state.filtrados = [...cache];
@@ -32,10 +32,10 @@ const App = {
             
             // Carrega em background para verificar atualizações
             setTimeout(() => {
-                this.loadData(true); // true = background
+                this.loadData(true);
             }, 500);
         } else {
-            // Primeiro acesso - carrega normal
+            // Primeiro acesso ou dados muito grandes
             this.loadData();
         }
     },
@@ -58,8 +58,12 @@ const App = {
             const dados = await DataProcessor.process();
             console.log(`✅ ${dados.length} registros carregados`);
             
-            // Salva no cache
-            this.saveToCache(dados);
+            // Salva no cache (apenas se for menor que 50k registros)
+            if (dados.length < 50000) {
+                this.saveToCache(dados);
+            } else {
+                console.log('📦 Dados muito grandes para cache, usando apenas memória');
+            }
             
             // Atualiza estado
             this.state.dados = dados;
@@ -70,7 +74,7 @@ const App = {
             
             const msg = `✅ ${dados.length} registros ${background ? '(atualizado)' : ''}`;
             this.setStatus('success', msg);
-            document.getElementById('lastUpdate').textContent = this.getCacheTimestamp();
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleString('pt-BR');
             
             if (background) {
                 console.log('✅ Cache atualizado em background!');
@@ -88,14 +92,20 @@ const App = {
     },
     
     /**
-     * Salva dados no cache
+     * Salva dados no cache (com verificação de tamanho)
      */
     saveToCache(dados) {
         try {
-            localStorage.setItem(this.state.cacheKey, JSON.stringify(dados));
-            localStorage.setItem(this.state.cacheTimestamp, new Date().toISOString());
+            const dataStr = JSON.stringify(dados);
+            if (dataStr.length < 4 * 1024 * 1024) { // 4MB
+                localStorage.setItem(this.state.cacheKey, dataStr);
+                localStorage.setItem(this.state.cacheTimestamp, new Date().toISOString());
+                console.log('💾 Cache salvo com sucesso');
+            } else {
+                console.log('⚠️ Dados muito grandes para cache');
+            }
         } catch (e) {
-            console.warn('⚠️ Erro ao salvar cache:', e);
+            console.warn('⚠️ Erro ao salvar cache:', e.message);
         }
     },
     
@@ -106,10 +116,13 @@ const App = {
         try {
             const data = localStorage.getItem(this.state.cacheKey);
             if (data) {
-                return JSON.parse(data);
+                const parsed = JSON.parse(data);
+                if (parsed && parsed.length > 0) {
+                    return parsed;
+                }
             }
         } catch (e) {
-            console.warn('⚠️ Erro ao ler cache:', e);
+            console.warn('⚠️ Erro ao ler cache:', e.message);
         }
         return null;
     },
@@ -224,5 +237,4 @@ document.addEventListener('DOMContentLoaded', () => {
     App.init();
 });
 
-// Expõe funções globalmente
 window.App = App;
