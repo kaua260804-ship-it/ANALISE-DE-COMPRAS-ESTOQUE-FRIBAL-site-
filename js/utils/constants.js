@@ -19,8 +19,12 @@ const SHEET_NAMES = {
     VENDA_LOJA: ['VD LJ', 'VENDA LOJA', 'VENDA_LJ', 'VENDAS']
 };
 
-// Mapeamento de empresa para divisão (usado para buscar na BS CAD)
+// ========================================
+// MAPEAMENTO DE EMPRESAS PARA DIVISÃO
+// ========================================
+// TODAS as empresas da planilha mapeadas para VAREJO ou DISTRIBUICAO
 const EMPRESA_MAP = {
+    // ===== LOJAS VAREJO =====
     'R001-EMP.CALHAU': 'VAREJO',
     'R004-EMP.COHAMA': 'VAREJO',
     'R005-MERC CRV90': 'VAREJO',
@@ -31,8 +35,34 @@ const EMPRESA_MAP = {
     'R064-EMP.THE': 'VAREJO',
     'R065-EMP.ITZ': 'VAREJO',
     'R072-MERC MAIOB': 'VAREJO',
+    // Adicione outras lojas aqui conforme necessário
+    
+    // ===== CD =====
     'C001-CD BR': 'DISTRIBUICAO'
 };
+
+// ========================================
+// FUNÇÃO PARA OBTER A DIVISÃO DE UMA EMPRESA
+// ========================================
+function getDivisao(empresa) {
+    // Se a empresa está no mapa, retorna a divisão
+    if (EMPRESA_MAP[empresa]) {
+        return EMPRESA_MAP[empresa];
+    }
+    
+    // Se começa com 'C00' ou 'CD', é DISTRIBUICAO
+    if (empresa && (empresa.startsWith('C00') || empresa.startsWith('CD') || empresa.includes('CD'))) {
+        return 'DISTRIBUICAO';
+    }
+    
+    // Se começa com 'R00' ou 'MERC', é VAREJO
+    if (empresa && (empresa.startsWith('R00') || empresa.startsWith('MERC') || empresa.includes('MERC'))) {
+        return 'VAREJO';
+    }
+    
+    // Fallback padrão
+    return 'VAREJO';
+}
 
 const STATUS_MAP = {
     'EM ESTOQUE': 'success',
