@@ -40,14 +40,17 @@ const DataProcessor = {
             }
             
             // ========================================
-            // ANALISA O PRIMEIRO REGISTRO DA ESTQ LJ
+            // ANALISA O PRIMEIRO REGISTRO DA VD LJ
             // ========================================
-            if (estoqueLoja.length > 0) {
-                const primeiro = estoqueLoja[0];
-                console.log('📝 Primeiro registro da ESTQ LJ:');
+            if (vendaLoja.length > 0) {
+                const primeiro = vendaLoja[0];
+                console.log('📝 Primeiro registro da VD LJ:');
                 console.log('  Chaves:', Object.keys(primeiro).slice(0, 15));
-                console.log('  Empresa:', primeiro['Empresa'] || primeiro['EMPRESA'] || '(não encontrado)');
+                // Procura por empresa em diferentes formatos
+                const empresaVD = primeiro['Empresa'] || primeiro['EMPRESA'] || primeiro['Código Empresa'] || primeiro['CODIGO EMPRESA'] || '';
+                console.log('  Empresa:', empresaVD || '(não encontrado)');
                 console.log('  Código Produto:', primeiro['Código Produto'] || primeiro['CODIGO PRODUTO'] || '(não encontrado)');
+                console.log('  Venda Quantidade:', primeiro['Venda Quantidade'] || primeiro['VendaQuantidade'] || '(não encontrado)');
             }
             
             // ========================================
@@ -74,13 +77,28 @@ const DataProcessor = {
                 }
             });
             
-            // Índice de VENDA por Código Produto + Empresa
+            // ========================================
+            // ÍNDICE DE VENDA - TENTA VÁRIOS FORMATOS DE EMPRESA
+            // ========================================
             const vendaIndex = {};
             vendaLoja.forEach(item => {
-                const empresa = item['Empresa'] || item['EMPRESA'] || '';
-                const codigo = item['Código Produto'] || item['CODIGO PRODUTO'] || '';
-                const chave = `${codigo}|${empresa}`;
-                vendaIndex[chave] = item;
+                // Tenta diferentes nomes de campo para empresa
+                const empresa = item['Empresa'] || 
+                               item['EMPRESA'] || 
+                               item['Código Empresa'] || 
+                               item['CODIGO EMPRESA'] || 
+                               '';
+                const codigo = item['Código Produto'] || 
+                              item['CODIGO PRODUTO'] || 
+                              '';
+                
+                // Cria chave com empresa
+                if (empresa && codigo) {
+                    const chave = `${codigo}|${empresa}`;
+                    vendaIndex[chave] = item;
+                }
+                
+                // Cria chave sem empresa (fallback)
                 if (codigo) {
                     vendaIndex[`${codigo}|`] = item;
                 }
@@ -91,9 +109,9 @@ const DataProcessor = {
             console.log('  ESTQ CD:', Object.keys(cdIndex).length);
             console.log('  VD LJ:', Object.keys(vendaIndex).length);
             
-            // Mostra as empresas encontradas na VD LJ
-            const empresasVD = [...new Set(vendaLoja.map(i => i['Empresa'] || i['EMPRESA'] || '').filter(Boolean))];
-            console.log('  Empresas na VD LJ:', empresasVD.slice(0, 10));
+            // Mostra exemplos de chaves do índice de venda
+            const vendaKeys = Object.keys(vendaIndex).slice(0, 10);
+            console.log('  Exemplos de chaves VD LJ:', vendaKeys);
             
             // ========================================
             // PROCESSA OS DADOS
@@ -127,7 +145,7 @@ const DataProcessor = {
                 // ===== CÓDIGO DO PRODUTO =====
                 const codigo = item['Código Produto'] || item['CODIGO PRODUTO'] || item['SEQPRODUTO'] || '';
                 
-                // ===== OBTÉM A DIVISÃO USANDO A FUNÇÃO GLOBAL =====
+                // ===== OBTÉM A DIVISÃO =====
                 const divisao = window.getDivisao ? window.getDivisao(empresa) : 'VAREJO';
                 
                 // ===== BUSCA NA BS CAD =====
@@ -141,12 +159,30 @@ const DataProcessor = {
                 }
                 if (parseFloat(cd['Quantidade Disponível'] || cd['QuantidadeDisponivel'] || 0) > 0) comCD++;
                 
-                // ===== BUSCA NA VENDA =====
-                let venda = vendaIndex[`${codigo}|${empresa}`] || {};
+                // ========================================
+                // BUSCA NA VENDA - POR EMPRESA + CÓDIGO
+                // ========================================
+                let venda = {};
+                
+                // Tenta buscar com a empresa exata
+                if (empresa && codigo) {
+                    venda = vendaIndex[`${codigo}|${empresa}`] || {};
+                }
                 
                 // Se não encontrou, tenta sem empresa
-                if (Object.keys(venda).length === 0) {
+                if (Object.keys(venda).length === 0 && codigo) {
                     venda = vendaIndex[`${codigo}|`] || {};
+                }
+                
+                // Se ainda não encontrou, tenta buscar por código apenas
+                if (Object.keys(venda).length === 0 && codigo) {
+                    // Busca em todas as chaves que começam com o código
+                    for (const key of Object.keys(vendaIndex)) {
+                        if (key.startsWith(`${codigo}|`)) {
+                            venda = vendaIndex[key];
+                            break;
+                        }
+                    }
                 }
                 
                 const vendaQtd = parseFloat(venda['Venda Quantidade'] || venda['VendaQuantidade'] || 0);
@@ -157,7 +193,7 @@ const DataProcessor = {
                     matchVenda++;
                 }
                 
-                // ===== CUSTO =====
+                // ===== CUSTO - TENTA VÁRIOS NOMES =====
                 const custo = parseFloat(item['Custo Liq. Unitário'] || 
                                         item['CustoLiqUnitario'] || 
                                         item['Custo Líquido'] ||
@@ -166,6 +202,8 @@ const DataProcessor = {
                                         item['CustoUnitario'] ||
                                         item['Valor Custo'] ||
                                         item['ValorCusto'] ||
+                                        item['Custo'] ||
+                                        item['CUSTO'] ||
                                         0);
                 if (custo > 0) comCusto++;
                 
@@ -230,6 +268,7 @@ const DataProcessor = {
                 console.log('  Qtd CD:', ex['Quantidade Disponível (CD)']);
                 console.log('  Venda Qtd:', ex['Venda Quantidade']);
                 console.log('  Venda R$:', ex['Venda Valor']);
+                console.log('  Custo:', ex['Custo Liq. Unitário']);
             }
             
             return resultado;
