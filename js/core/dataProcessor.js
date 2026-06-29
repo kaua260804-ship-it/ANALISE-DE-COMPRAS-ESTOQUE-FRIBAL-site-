@@ -127,8 +127,8 @@ const DataProcessor = {
                 // ===== CÓDIGO DO PRODUTO =====
                 const codigo = item['Código Produto'] || item['CODIGO PRODUTO'] || item['SEQPRODUTO'] || '';
                 
-                // ===== OBTÉM A DIVISÃO USANDO A FUNÇÃO =====
-                const divisao = getDivisao(empresa);
+                // ===== OBTÉM A DIVISÃO USANDO A FUNÇÃO GLOBAL =====
+                const divisao = window.getDivisao ? window.getDivisao(empresa) : 'VAREJO';
                 
                 // ===== BUSCA NA BS CAD =====
                 const chaveCadastro = `${codigo}|${divisao}`;
