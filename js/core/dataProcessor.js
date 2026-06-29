@@ -45,54 +45,72 @@ const DataProcessor = {
             if (estoqueLoja.length > 0) {
                 const primeiro = estoqueLoja[0];
                 console.log('📝 Primeiro registro da ESTQ LJ:');
-                console.log('  Todas as chaves:', Object.keys(primeiro));
-                
-                // Procura por campos de custo
-                const possiveisCustos = ['Custo Liq. Unitário', 'CustoLiqUnitario', 'Custo Líquido', 'CustoLiquido', 'Custo Unitário', 'CustoUnitario', 'Valor Custo', 'ValorCusto'];
-                possiveisCustos.forEach(key => {
-                    if (primeiro[key] !== undefined) {
-                        console.log(`  CUSTO - ${key}:`, primeiro[key]);
-                    }
-                });
+                console.log('  Chaves:', Object.keys(primeiro).slice(0, 15));
+                console.log('  Empresa:', primeiro['Empresa'] || primeiro['EMPRESA'] || '(não encontrado)');
+                console.log('  Código Produto:', primeiro['Código Produto'] || primeiro['CODIGO PRODUTO'] || '(não encontrado)');
+            }
+            
+            if (vendaLoja.length > 0) {
+                const primeiro = vendaLoja[0];
+                console.log('📝 Primeiro registro da VD LJ:');
+                console.log('  Chaves:', Object.keys(primeiro).slice(0, 15));
+                console.log('  Empresa:', primeiro['Empresa'] || primeiro['EMPRESA'] || '(não encontrado)');
+                console.log('  Código Produto:', primeiro['Código Produto'] || primeiro['CODIGO PRODUTO'] || '(não encontrado)');
+                console.log('  Venda Quantidade:', primeiro['Venda Quantidade'] || primeiro['VendaQuantidade'] || '(não encontrado)');
+                console.log('  Venda Valor:', primeiro['Venda Valor'] || primeiro['VendaValor'] || '(não encontrado)');
             }
             
             // ========================================
-            // CRIA ÍNDICES
+            // CRIA ÍNDICES PARA JOIN
             // ========================================
             console.log('🔨 Criando índices para busca...');
             
+            // Índice BS CAD por SEQPRODUTO + DIVISAO
             const bsCadIndex = {};
             bsCad.forEach(item => {
                 const chave = `${item['SEQPRODUTO']}|${item['DIVISAO']}`;
                 bsCadIndex[chave] = item;
             });
             
+            // Índice CD por Código Produto + Empresa
             const cdIndex = {};
             estoqueCD.forEach(item => {
                 const empresa = item['Empresa'] || item['EMPRESA'] || '';
                 const codigo = item['Código Produto'] || item['CODIGO PRODUTO'] || '';
                 const chave = `${codigo}|${empresa}`;
                 cdIndex[chave] = item;
+                // Fallback sem empresa
                 if (codigo) {
                     cdIndex[`${codigo}|`] = item;
                 }
             });
             
+            // ========================================
+            // ÍNDICE DE VENDA POR Código Produto + Empresa
+            // ========================================
             const vendaIndex = {};
             vendaLoja.forEach(item => {
                 const empresa = item['Empresa'] || item['EMPRESA'] || '';
                 const codigo = item['Código Produto'] || item['CODIGO PRODUTO'] || '';
                 const chave = `${codigo}|${empresa}`;
                 vendaIndex[chave] = item;
+                // Fallback sem empresa
                 if (codigo) {
                     vendaIndex[`${codigo}|`] = item;
                 }
             });
             
             console.log('✅ Índices criados');
+            console.log('  BS CAD:', Object.keys(bsCadIndex).length);
+            console.log('  ESTQ CD:', Object.keys(cdIndex).length);
+            console.log('  VD LJ:', Object.keys(vendaIndex).length);
+            
+            // Mostra alguns exemplos de chaves do índice de venda
+            const vendaKeys = Object.keys(vendaIndex).slice(0, 5);
+            console.log('  Exemplos de chaves VD LJ:', vendaKeys);
             
             // ========================================
-            // PROCESSA OS DADOS
+            // PROCESSA OS DADOS - JOIN CORRETO
             // ========================================
             console.log(`📊 Processando ${estoqueLoja.length} registros...`);
             
@@ -101,12 +119,15 @@ const DataProcessor = {
             let comVenda = 0;
             let comCD = 0;
             let comCusto = 0;
+            let matchVenda = 0;
             
             for (let i = 0; i < estoqueLoja.length; i++) {
                 const item = estoqueLoja[i];
                 
-                // Empresa
-                let empresa = item['Empresa'] || item['EMPRESA'] || item['Código Empresa'] || item['CODIGO EMPRESA'] || '';
+                // ===== CAMPO EMPRESA =====
+                let empresa = item['Empresa'] || item['EMPRESA'] || '';
+                
+                // Se não encontrou empresa, tenta inferir pela divisão
                 if (!empresa) {
                     const divisao = item['DIVISAO'] || '';
                     if (divisao === 'VAREJO') {
@@ -117,26 +138,39 @@ const DataProcessor = {
                 }
                 if (empresa) comEmpresa++;
                 
+                // ===== CÓDIGO DO PRODUTO =====
                 const codigo = item['Código Produto'] || item['CODIGO PRODUTO'] || item['SEQPRODUTO'] || '';
                 const divisao = EMPRESA_MAP[empresa] || 'VAREJO';
                 
-                // Busca no cadastro
+                // ===== BUSCA NA BS CAD =====
                 const chaveCadastro = `${codigo}|${divisao}`;
                 const cadastro = bsCadIndex[chaveCadastro] || {};
                 
-                // Busca no CD
+                // ===== BUSCA NO CD =====
                 let cd = cdIndex[`${codigo}|${empresa}`] || {};
                 if (Object.keys(cd).length === 0) {
                     cd = cdIndex[`${codigo}|`] || {};
                 }
                 if (parseFloat(cd['Quantidade Disponível'] || cd['QuantidadeDisponivel'] || 0) > 0) comCD++;
                 
-                // Busca na Venda
+                // ========================================
+                // BUSCA NA VENDA - JOIN POR EMPRESA + CÓDIGO
+                // ========================================
                 let venda = vendaIndex[`${codigo}|${empresa}`] || {};
+                
+                // Se não encontrou, tenta sem empresa
                 if (Object.keys(venda).length === 0) {
                     venda = vendaIndex[`${codigo}|`] || {};
                 }
-                if (parseFloat(venda['Venda Valor'] || venda['VendaValor'] || 0) > 0) comVenda++;
+                
+                // Verifica se encontrou venda
+                const vendaQtd = parseFloat(venda['Venda Quantidade'] || venda['VendaQuantidade'] || 0);
+                const vendaValor = parseFloat(venda['Venda Valor'] || venda['VendaValor'] || venda['Valor'] || 0);
+                
+                if (vendaQtd > 0 || vendaValor > 0) {
+                    comVenda++;
+                    matchVenda++;
+                }
                 
                 // ===== CUSTO =====
                 const custo = parseFloat(item['Custo Liq. Unitário'] || 
@@ -150,10 +184,14 @@ const DataProcessor = {
                                         0);
                 if (custo > 0) comCusto++;
                 
+                // ===== NOME DO PRODUTO =====
                 const produto = item['Produto'] || item['PRODUTO'] || item['Descrição'] || item['DESCRICAO'] || '';
                 
+                // ========================================
+                // MONTA O REGISTRO COMPLETO
+                // ========================================
                 resultado.push({
-                    // ===== BS CAD =====
+                    // BS CAD
                     'COMPRADOR': cadastro['COMPRADOR'] || '',
                     'CATEGORIA': cadastro['CATEGORIA'] || '',
                     'GRUPO': cadastro['GRUPO'] || '',
@@ -163,7 +201,7 @@ const DataProcessor = {
                     'SUBGRUPO4': cadastro['SUBGRUPO4'] || '',
                     'FORNECEDOR': cadastro['FORNECEDOR'] || '',
                     
-                    // ===== ESTOQUE LOJA =====
+                    // ESTOQUE LOJA
                     'Empresa': empresa,
                     'Produto': produto,
                     'Código Produto': codigo,
@@ -175,17 +213,19 @@ const DataProcessor = {
                     'STATUS ESTOQUE': item['STATUS ESTOQUE'] || item['STATUSESTOQUE'] || '',
                     'STTS PREÇO': item['STTS PREÇO'] || item['STTSPRECO'] || '',
                     
-                    // ===== CUSTO =====
-                    'Custo Liq. Unitário': custo,  // <-- ADICIONADO PARA MÉDIA DE CUSTO
+                    // CUSTO
+                    'Custo Liq. Unitário': custo,
                     
-                    // ===== ESTOQUE CD =====
+                    // ESTOQUE CD
                     'Quantidade Disponível (CD)': parseFloat(cd['Quantidade Disponível'] || cd['QuantidadeDisponivel'] || cd['QTD'] || 0),
                     'Quantidade em Estoque (CD)': parseFloat(cd['Quantidade em Estoque'] || cd['QuantidadeEmEstoque'] || 0),
                     'Dias de Estoque (CD)': parseFloat(cd['Dias de Estoque'] || cd['DiasEstoque'] || 0),
                     
-                    // ===== VENDA LOJA =====
-                    'Venda Quantidade': parseFloat(venda['Venda Quantidade'] || venda['VendaQuantidade'] || 0),
-                    'Venda Valor': parseFloat(venda['Venda Valor'] || venda['VendaValor'] || venda['Valor'] || 0),
+                    // ========================================
+                    // VENDA LOJA - VALORES POR EMPRESA
+                    // ========================================
+                    'Venda Quantidade': vendaQtd,
+                    'Venda Valor': vendaValor,
                     'Unitário Médio': parseFloat(venda['Unitário Médio'] || venda['UnitarioMedio'] || 0)
                 });
             }
@@ -194,8 +234,10 @@ const DataProcessor = {
             console.log(`  Com Empresa: ${comEmpresa} registros`);
             console.log(`  Com Custo: ${comCusto} registros`);
             console.log(`  Com Venda: ${comVenda} registros`);
+            console.log(`  Match Venda por Empresa: ${matchVenda} registros`);
             console.log(`  Com CD: ${comCD} registros`);
             
+            // Mostra exemplo do primeiro registro
             if (resultado.length > 0) {
                 const ex = resultado[0];
                 console.log('📝 Exemplo do primeiro registro:');
@@ -203,8 +245,18 @@ const DataProcessor = {
                 console.log('  Produto:', ex['Produto']);
                 console.log('  Qtd Loja:', ex['Quantidade Disponível (Loja)']);
                 console.log('  Qtd CD:', ex['Quantidade Disponível (CD)']);
+                console.log('  Venda Qtd:', ex['Venda Quantidade']);
                 console.log('  Venda R$:', ex['Venda Valor']);
                 console.log('  Custo:', ex['Custo Liq. Unitário']);
+                console.log('  Categoria:', ex['CATEGORIA'] || '(vazio)');
+            }
+            
+            // Verifica se encontrou vendas
+            if (matchVenda === 0 && vendaLoja.length > 0) {
+                console.warn('⚠️ Nenhum match de venda encontrado!');
+                console.log('🔍 Exemplos de chaves no índice de venda:', Object.keys(vendaIndex).slice(0, 10));
+                console.log('🔍 Exemplos de empresas na ESTQ LJ:', [...new Set(estoqueLoja.map(i => i['Empresa'] || i['EMPRESA'] || ''))].slice(0, 10));
+                console.log('🔍 Exemplos de empresas na VD LJ:', [...new Set(vendaLoja.map(i => i['Empresa'] || i['EMPRESA'] || ''))].slice(0, 10));
             }
             
             return resultado;
@@ -245,7 +297,8 @@ const DataProcessor = {
                 'Dias de Estoque (Loja)': Math.floor(Math.random() * 30) + 1,
                 'STATUS ESTOQUE': ['EM ESTOQUE','ESTOQUE BAIXO','SEM ESTOQUE'][Math.floor(Math.random()*3)],
                 'STTS PREÇO': ['PRECO COMPETITIVO','PRECO ALTO','PRECO BAIXO'][Math.floor(Math.random()*3)],
-                'Custo Liq. Unitário': preco * 0.6  // <-- Custo fictício para fallback
+                'Custo Liq. Unitário': preco * 0.6,
+                'Unitário Médio': preco
             });
         }
         
