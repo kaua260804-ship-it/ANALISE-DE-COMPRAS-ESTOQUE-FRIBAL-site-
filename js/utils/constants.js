@@ -22,7 +22,6 @@ const SHEET_NAMES = {
 // ========================================
 // MAPEAMENTO DE EMPRESAS PARA DIVISÃO
 // ========================================
-// TODAS as empresas da planilha mapeadas para VAREJO ou DISTRIBUICAO
 const EMPRESA_MAP = {
     // ===== LOJAS VAREJO =====
     'R001-EMP.CALHAU': 'VAREJO',
@@ -35,8 +34,6 @@ const EMPRESA_MAP = {
     'R064-EMP.THE': 'VAREJO',
     'R065-EMP.ITZ': 'VAREJO',
     'R072-MERC MAIOB': 'VAREJO',
-    // Adicione outras lojas aqui conforme necessário
-    
     // ===== CD =====
     'C001-CD BR': 'DISTRIBUICAO'
 };
@@ -113,3 +110,15 @@ const STATS_CONFIG = [
     { id: 'totalDisponivel', label: 'Qtd Disponível', icon: 'fa-cubes' },
     { id: 'vendaTotalQtd', label: 'Total Venda Qtd', icon: 'fa-chart-bar' }
 ];
+
+// ========================================
+// EXPORTA PARA USO GLOBAL
+// ========================================
+window.APP = APP;
+window.SHEET_NAMES = SHEET_NAMES;
+window.EMPRESA_MAP = EMPRESA_MAP;
+window.getDivisao = getDivisao;  // <-- EXPORTA A FUNÇÃO
+window.STATUS_MAP = STATUS_MAP;
+window.TABLE_COLUMNS = TABLE_COLUMNS;
+window.DASHBOARD_CARDS = DASHBOARD_CARDS;
+window.STATS_CONFIG = STATS_CONFIG;
