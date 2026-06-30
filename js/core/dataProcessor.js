@@ -47,14 +47,8 @@ const DataProcessor = {
                 console.log('📝 Primeiro registro da VD LJ:');
                 console.log('  Chaves:', Object.keys(primeiro));
                 
-                // Mostra todas as chaves que contêm "Empresa"
-                const keys = Object.keys(primeiro);
-                keys.forEach(key => {
-                    if (key.toLowerCase().includes('empresa')) {
-                        console.log(`  ${key}:`, primeiro[key]);
-                    }
-                });
-                
+                // Mostra a empresa com o nome exato
+                console.log('  Empresa (exato):', primeiro['Empresa '] || '(não encontrado)');
                 console.log('  Código Produto:', primeiro['Código Produto']);
                 console.log('  Venda Quantidade:', primeiro['Venda Quantidade']);
                 console.log('  Venda Valor:', primeiro['Venda Valor']);
@@ -84,22 +78,17 @@ const DataProcessor = {
             });
             
             // ========================================
-            // ÍNDICE DE VENDA - USA O NOME CORRETO "Empresa "
+            // ÍNDICE DE VENDA - USA "Empresa " (COM ESPAÇO!)
             // ========================================
             const vendaIndex = {};
             vendaLoja.forEach(item => {
-                // Tenta vários nomes para empresa (incluindo com espaço)
-                const empresa = item['Empresa '] ||  // <-- TEM ESPAÇO NO FINAL!
-                               item['Empresa'] || 
-                               item['EMPRESA'] || 
-                               '';
-                
+                // NOME EXATO DA COLUNA: "Empresa " (com espaço no final)
+                const empresa = item['Empresa '] || '';  // <-- ATENÇÃO: TEM ESPAÇO!
                 const codigo = item['Código Produto'] || '';
                 
                 if (empresa && codigo) {
                     const chave = `${codigo}|${empresa}`;
                     vendaIndex[chave] = item;
-                    console.log(`  ✅ Índice criado: ${chave}`);
                 }
             });
             
@@ -241,7 +230,7 @@ const DataProcessor = {
                 console.warn('⚠️ Nenhum match de venda encontrado!');
                 console.log('🔍 Exemplos de chaves no índice de venda:', Object.keys(vendaIndex).slice(0, 10));
                 console.log('🔍 Exemplos de EMPRESA na ESTQ LJ:', [...new Set(estoqueLoja.map(i => i['Empresa'] || i['EMPRESA'] || ''))].slice(0, 10));
-                console.log('🔍 Exemplos de Empresa na VD LJ:', [...new Set(vendaLoja.map(i => i['Empresa '] || i['Empresa'] || ''))].slice(0, 10));
+                console.log('🔍 Exemplos de "Empresa " na VD LJ:', [...new Set(vendaLoja.map(i => i['Empresa '] || ''))].slice(0, 10));
             }
             
             return resultado;
