@@ -45,10 +45,19 @@ const DataProcessor = {
             if (vendaLoja.length > 0) {
                 const primeiro = vendaLoja[0];
                 console.log('📝 Primeiro registro da VD LJ:');
-                console.log('  Chaves:', Object.keys(primeiro).slice(0, 15));
-                console.log('  EMPRESA:', primeiro['EMPRESA'] || '(não encontrado)');
-                console.log('  Código Produto:', primeiro['Código Produto'] || '(não encontrado)');
-                console.log('  Venda Quantidade:', primeiro['Venda Quantidade'] || '(não encontrado)');
+                console.log('  Chaves:', Object.keys(primeiro));
+                
+                // Mostra todas as chaves que contêm "Empresa"
+                const keys = Object.keys(primeiro);
+                keys.forEach(key => {
+                    if (key.toLowerCase().includes('empresa')) {
+                        console.log(`  ${key}:`, primeiro[key]);
+                    }
+                });
+                
+                console.log('  Código Produto:', primeiro['Código Produto']);
+                console.log('  Venda Quantidade:', primeiro['Venda Quantidade']);
+                console.log('  Venda Valor:', primeiro['Venda Valor']);
             }
             
             // ========================================
@@ -63,10 +72,10 @@ const DataProcessor = {
                 bsCadIndex[chave] = item;
             });
             
-            // Índice CD por Código Produto + EMPRESA
+            // Índice CD por Código Produto + Empresa
             const cdIndex = {};
             estoqueCD.forEach(item => {
-                const empresa = item['EMPRESA'] || '';
+                const empresa = item['Empresa'] || item['EMPRESA'] || '';
                 const codigo = item['Código Produto'] || '';
                 if (empresa && codigo) {
                     const chave = `${codigo}|${empresa}`;
@@ -75,15 +84,22 @@ const DataProcessor = {
             });
             
             // ========================================
-            // ÍNDICE DE VENDA POR Código Produto + EMPRESA
+            // ÍNDICE DE VENDA - USA O NOME CORRETO "Empresa "
             // ========================================
             const vendaIndex = {};
             vendaLoja.forEach(item => {
-                const empresa = item['EMPRESA'] || '';
+                // Tenta vários nomes para empresa (incluindo com espaço)
+                const empresa = item['Empresa '] ||  // <-- TEM ESPAÇO NO FINAL!
+                               item['Empresa'] || 
+                               item['EMPRESA'] || 
+                               '';
+                
                 const codigo = item['Código Produto'] || '';
+                
                 if (empresa && codigo) {
                     const chave = `${codigo}|${empresa}`;
                     vendaIndex[chave] = item;
+                    console.log(`  ✅ Índice criado: ${chave}`);
                 }
             });
             
@@ -94,7 +110,7 @@ const DataProcessor = {
             
             // Mostra exemplos de chaves do índice de venda
             const vendaKeys = Object.keys(vendaIndex).slice(0, 10);
-            console.log('  Exemplos de chaves VD LJ (Código|EMPRESA):', vendaKeys);
+            console.log('  Exemplos de chaves VD LJ (Código|Empresa):', vendaKeys);
             
             // ========================================
             // PROCESSA OS DADOS
@@ -112,7 +128,7 @@ const DataProcessor = {
                 const item = estoqueLoja[i];
                 
                 // ===== CAMPO EMPRESA =====
-                const empresa = item['EMPRESA'] || '';
+                const empresa = item['Empresa'] || item['EMPRESA'] || '';
                 if (empresa) comEmpresa++;
                 
                 // ===== CÓDIGO DO PRODUTO =====
@@ -133,7 +149,7 @@ const DataProcessor = {
                 if (parseFloat(cd['Quantidade Disponível'] || 0) > 0) comCD++;
                 
                 // ========================================
-                // BUSCA NA VENDA - POR Código Produto + EMPRESA
+                // BUSCA NA VENDA - POR Código Produto + Empresa
                 // ========================================
                 let venda = {};
                 if (empresa && codigo) {
@@ -224,8 +240,8 @@ const DataProcessor = {
             if (matchVenda === 0 && vendaLoja.length > 0) {
                 console.warn('⚠️ Nenhum match de venda encontrado!');
                 console.log('🔍 Exemplos de chaves no índice de venda:', Object.keys(vendaIndex).slice(0, 10));
-                console.log('🔍 Exemplos de EMPRESA na ESTQ LJ:', [...new Set(estoqueLoja.map(i => i['EMPRESA'] || ''))].slice(0, 10));
-                console.log('🔍 Exemplos de EMPRESA na VD LJ:', [...new Set(vendaLoja.map(i => i['EMPRESA'] || ''))].slice(0, 10));
+                console.log('🔍 Exemplos de EMPRESA na ESTQ LJ:', [...new Set(estoqueLoja.map(i => i['Empresa'] || i['EMPRESA'] || ''))].slice(0, 10));
+                console.log('🔍 Exemplos de Empresa na VD LJ:', [...new Set(vendaLoja.map(i => i['Empresa '] || i['Empresa'] || ''))].slice(0, 10));
             }
             
             return resultado;
